@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Only When the Sun is Out</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: linear-gradient(to top, #ffffff, #f9f9f9);
+      color: #333;
+    }
+    #day-content, #night-content {
+      max-width: 600px;
+      margin: auto;
+    }
+    #day-content, #night-content {
+      display: none;
+    }
+    .sun-emoji, .moon-emoji {
+      font-size: 60px;
+      animation: float 2s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="day-content">
+    <div class="sun-emoji">🌞</div>
+    <h1>Welcome to a site powered by the sun. Literally.</h1>
+    <p>Only available from sunrise to sunset. Because without sunlight, we power down too.</p>
+    <p><strong>Explore:</strong> Solar 101 · Energy Quiz · Fun Facts · Video Story</p>
+
+    <section id="solar-101" style="padding: 2rem; background-color: #fff8dc;">
+      <h2>🔆 Solar 101</h2>
+      <h3>What is solar energy?</h3>
+      <p>Solar energy is the light and heat that comes from the sun. It's clean, renewable, and free.</p>
+      <h3>How do solar panels work?</h3>
+      <p>Solar panels use the photovoltaic effect to turn sunlight into electricity for your home.</p>
+      <h3>Why go solar?</h3>
+      <ul>
+        <li>💸 <strong>Save Money:</strong> Lower your electricity bills.</li>
+        <li>🌍 <strong>Eco-Friendly:</strong> No air or water pollution.</li>
+        <li>🔌 <strong>Energy Independence:</strong> Rely on the sun, not the grid.</li>
+        <li>📈 <strong>Long-Term Investment:</strong> Panels last 20-25 years or more.</li>
+      </ul>
+      <p><em>☀️ Fun Fact:</em> One hour of sunlight can power Earth for a whole year!</p>
+    </section>
+  </div>
+
+  <div id="night-content">
+    <div class="moon-emoji">🌙</div>
+    <h1>The sun has set. Come back tomorrow.</h1>
+    <p>The site is sleeping now. Just like your solar panels at night 😴</p>
+  </div>
+
+  <script>
+    function checkSunlight(lat, lng) {
+      const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&formatted=0`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const now = new Date();
+          const sunrise = new Date(data.results.sunrise);
+          const sunset = new Date(data.results.sunset);
+          if (now >= sunrise && now <= sunset) {
+            document.getElementById('day-content').style.display = 'block';
+            document.getElementById('night-content').style.display = 'none';
+          } else {
+            document.getElementById('day-content').style.display = 'none';
+            document.getElementById('night-content').style.display = 'block';
+          }
+        });
+    }
+
+    function initSunCheck() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            checkSunlight(position.coords.latitude, position.coords.longitude);
+          },
+          () => {
+            // Fallback to Kuala Lumpur if geolocation is denied
+            checkSunlight(3.1390, 101.6869);
+          }
+        );
+      } else {
+        checkSunlight(3.1390, 101.6869);
+      }
+    }
+
+    initSunCheck();
+  </script>
+</body>
+</html>
